@@ -62,13 +62,67 @@
       background:black;
       position: absolute;
       top:50%;
+      transform-origin: 100%;
+      transform: rotate(90deg);
+      transition: all 0.05s;
+      transition-timing-function: ease-in-out;
     }
 
   </style>
 
   <script>
 
+    function Clock(){
 
+      this.state = {
+        secondHand: document.querySelector('.second-hand'),
+        minuteHand: document.querySelector('.min-hand'),
+        hourHand: document.querySelector('.hour-hand'),
+        toggleTransition: true,
+        transition: 'all 0.05s'
+      }
+
+      this.setState = (state) => {
+        this.state = { ...this.state, ...state };
+      };
+
+      this.start = () => {
+        this.interval = setInterval(() => {
+
+          this.now = new Date();
+          const { secondHand, minuteHand, hourHand, transition, toggleTransition } = this.state;
+
+          console.log(this.now.getSeconds());
+          console.log(this.state);
+
+          if (this.now.getSeconds() === 59){
+            this.setState({
+              toggleTransition: false,
+              transition: 'none'
+            });
+          } else {
+            this.setState({
+              toggleTransition: true,
+              transition: 'all 0.05s'
+            });
+          }
+
+          secondHand.style.transition = transition;
+
+          const secondsDegrees = (this.now.getSeconds()/60)*360 + 90;
+          const minutesDegrees = (this.now.getMinutes()/60)*360 + 90;
+          const hoursDegrees = (this.now.getHours()/12)*360 + 90;
+
+          secondHand.style.transform = `rotate(${secondsDegrees}deg)`;
+          minuteHand.style.transform = `rotate(${minutesDegrees}deg)`;
+          hourHand.style.transform = `rotate(${hoursDegrees}deg)`;
+        }, 1000);
+      }
+      this.stop = () => clearInterval(this.interval);
+    }
+
+    const clock = new Clock();
+    clock.start();
   </script>
 </body>
 </html>
