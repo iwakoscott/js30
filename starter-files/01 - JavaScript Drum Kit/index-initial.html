@@ -58,31 +58,45 @@
   <audio data-key="76" src="sounds/tink.wav"></audio>
 
 <script>
-  document.addEventListener('keydown', e => {
-    // get the key that has been pressed down
-    const { keyCode } = e;
 
-    const audio = document.querySelector(`audio[data-key="${keyCode}"]`);
-    const key = document.querySelector(`.key[data-key="${keyCode}"]`);
+  const getAudioTag = key => [...document.getElementsByTagName('audio')].filter(audio => audio.dataset.key == key)[0];
 
-    // validate key has a sound
-    if (!audio) return;
 
-    // rewind sound on each press
-    audio.currentTime = 0;
-    key.classList.add('playing');
+  function Keys(){
+    const keys = [...document.querySelectorAll('div.key')];
+    return keys.reduce((init, next) => {
+      init[next.dataset.key] = new Key(next);
+      return init;
+    }, {});
+  }
 
-    audio.play();
-  });
+  function Key(node){
+    this.id = node.dataset.key;
+    this.sound = getAudioTag(this.id);
+    this.playSound = e => {
+        this.sound.currentTime = 0;
+        this.sound.addEventListener('ended', () => {
+          node.classList.remove('playing');
+        })
+        node.classList.add('playing');
+        this.sound.play();
+    }
+  }
 
-  const keys = document.querySelectorAll('.key');
-  keys.forEach(key => {
-    key.addEventListener('transitionend', e => {
-      const { propertyName } = e;
-      if (propertyName !== 'transform') return;
-      key.classList.remove('playing');
-    });
-  });
+  function App(){
+
+    this.Keys = Keys();
+    window.addEventListener('keydown', e => {
+      const key = e.keyCode;
+      if (Object.keys(this.Keys).includes(`${key}`)){
+        this.Keys[key].playSound();
+      }
+    })
+
+  }
+
+  App();
+
 </script>
 
 
