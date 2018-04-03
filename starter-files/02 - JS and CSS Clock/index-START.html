@@ -92,9 +92,6 @@
           this.now = new Date();
           const { secondHand, minuteHand, hourHand, transition, toggleTransition } = this.state;
 
-          console.log(this.now.getSeconds());
-          console.log(this.state);
-
           if (this.now.getSeconds() === 59){
             this.setState({
               toggleTransition: false,
@@ -108,6 +105,9 @@
           }
 
           secondHand.style.transition = transition;
+          minuteHand.style.transition = transition;
+          hourHand.style.transition = transition;
+
 
           const secondsDegrees = (this.now.getSeconds()/60)*360 + 90;
           const minutesDegrees = (this.now.getMinutes()/60)*360 + 90;
