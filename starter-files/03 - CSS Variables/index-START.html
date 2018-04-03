@@ -22,6 +22,22 @@
 
   <style>
 
+    :root {
+      --spacing: 10px;
+      --blur: 10px;
+      --base: #eb4d4b;
+    }
+
+    img {
+      padding: var(--spacing);
+      filter: blur(var(--blur));
+      background: var(--base);
+    }
+
+  .hl {
+    color: var(--base);
+  }
+
     /*
       misc styles, nothing to do with CSS variables
     */
@@ -45,6 +61,29 @@
   </style>
 
   <script>
+    function Controls(){
+      this.controls = [...document.querySelectorAll('.controls > input')]
+        .map(node => new Control(node));
+    }
+
+    function Control(node){
+
+      this.handleUpdate = e => {
+        const suffix = node.dataset.sizing || '';
+        document.documentElement.style.setProperty(`--${node.name}`, `${node.value}${suffix}`);
+      };
+
+      node.addEventListener('change', this.handleUpdate);
+      node.addEventListener('mousemove', this.handleUpdate);
+    }
+
+    function App(){
+      // on interaction with the controls => adjust the picture accordingly
+      Controls();
+    }
+
+    App();
+
   </script>
 
 </body>
