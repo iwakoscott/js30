@@ -17,6 +17,48 @@
 <script>
 const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
 
+function App(){
+
+  fetch(endpoint)
+    .then(data => data.json())
+    .then(cities => {
+
+      function handleSearch(e){
+        const list = document.querySelector('ul.suggestions');
+        const term = e.target.value;
+        const regex = new RegExp(term, 'gi');
+        const filteredCities = cities.filter(location => location.city.match(regex) || location.state.match(regex));
+        let listItems = [];
+        filteredCities.forEach(({ city, state, population }) => {
+
+          const re = new RegExp(term, 'gi');
+
+          const cityName = city.replace(re, `<span class="hl">${term}</span>`);
+          const stateName = state.replace(re, `<span class="hl">${term}</span>`);
+
+          const item = `<li>
+                          <span class="name">${cityName}, ${stateName}</span>
+                          <span class="population">${population}</span>
+                        </li>`;
+          listItems.push(item);
+        });
+
+        list.innerHTML = listItems.join('');
+      }
+
+      function handleSubmit(e){
+        e.preventDefault();
+      }
+
+      document.querySelector('input.search').addEventListener('change', handleSearch);
+      document.querySelector('input.search').addEventListener('keyup', handleSearch);
+      document.querySelector('form.search-form').addEventListener('submit', handleSubmit);
+    });
+
+}
+
+const app = new App();
+
 </script>
   </body>
 </html>
